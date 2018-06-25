@@ -13,4 +13,16 @@
             </column>
         </createTable>
     </changeSet>
+    <changeSet id="2" author="dp">
+        <renameTable oldTableName="shifts" newTableName="shift"/>
+    </changeSet>
+
+    <changeSet id="3" author="dp">
+        <addColumn tableName="shift">
+            <column name="email" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
