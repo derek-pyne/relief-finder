@@ -25,4 +25,30 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="4" author="dp">
+        <createTable tableName="contact">
+            <column name="id" type="varchar">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="varchar"/>
+            <column name="full_name" type="varchar"/>
+            <column name="created_date" type="timestamp with time zone"/>
+            <column name="last_modified_date" type="timestamp with time zone"/>
+        </createTable>
+
+        <addColumn tableName="shift">
+            <column name="poster_id" type="varchar">
+                <constraints foreignKeyName="shift_poster_fk" nullable="true" referencedTableName="contact"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="created_date" type="timestamp with time zone"/>
+            <column name="last_modified_date" type="timestamp with time zone"/>
+        </addColumn>
+
+        <dropColumn tableName="shift" columnName="email"/>
+    </changeSet>
+
 </databaseChangeLog>
