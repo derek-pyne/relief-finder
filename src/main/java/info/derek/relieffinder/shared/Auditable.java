@@ -1,4 +1,4 @@
-package info.derek.relieffinder;
+package info.derek.relieffinder.shared;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.time.Instant;
 
 @Data
 @MappedSuperclass
-abstract class Auditable {
+public abstract class Auditable {
 
     @LastModifiedDate
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

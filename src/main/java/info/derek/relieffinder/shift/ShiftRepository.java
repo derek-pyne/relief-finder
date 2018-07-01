@@ -1,8 +1,8 @@
-package info.derek.relieffinder;
+package info.derek.relieffinder.shift;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
-interface ShiftRepository extends PagingAndSortingRepository<Shift, String> {
+public interface ShiftRepository extends PagingAndSortingRepository<Shift, String> {
 }

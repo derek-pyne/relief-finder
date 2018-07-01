@@ -1,16 +1,19 @@
-package info.derek.relieffinder;
+package info.derek.relieffinder.shift;
 
+import info.derek.relieffinder.contact.Contact;
+import info.derek.relieffinder.shared.Auditable;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class)
-class Contact extends Auditable {
+public class Shift extends Auditable {
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -18,10 +21,6 @@ class Contact extends Auditable {
     @Column(unique = true, nullable = false)
     private String id;
 
-    @NotBlank
-    private String email;
-
-    private String phoneNumber;
-
-    private String fullName;
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private Contact poster;
 }

@@ -1,4 +1,4 @@
-package info.derek.relieffinder;
+package info.derek.relieffinder.shared;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
