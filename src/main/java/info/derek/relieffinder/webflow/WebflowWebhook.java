@@ -3,8 +3,8 @@ package info.derek.relieffinder.webflow;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import javax.validation.Valid;
 import java.time.Instant;
-import java.util.Map;
 
 @Data
 class WebflowWebhook {
@@ -16,7 +16,8 @@ class WebflowWebhook {
 
     private String site;
 
-    private Map<String, String> data;
+    @Valid
+    private ShiftCreationForm data;
 
     @JsonProperty("d")
     private Instant time;

@@ -1,6 +1,7 @@
 package info.derek.relieffinder.contact;
 
 import info.derek.relieffinder.shared.Auditable;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class Contact extends Auditable {
 
