@@ -16,7 +16,11 @@ class ShiftCMS {
     @JsonProperty("poster-email")
     private String posterEmail;
 
-    private Instant time;
+    @JsonProperty("time")
+    private Instant startTime;
+
+    @JsonProperty("end-time")
+    private Instant endTime;
 
     private String name;
 
@@ -25,9 +29,17 @@ class ShiftCMS {
     @JsonProperty("_id")
     private String id;
 
+    @JsonProperty("_draft")
+    private boolean draft;
+
+    @JsonProperty("_archived")
+    private boolean archived;
+
     static ShiftCMS fromShift(Shift shift) {
         return ShiftCMS.builder()
                 .posterEmail(shift.getPoster().getEmail())
+                .startTime(shift.getStartTime())
+                .endTime(shift.getEndTime())
                 .name("Epic test shift")
                 .build();
     }

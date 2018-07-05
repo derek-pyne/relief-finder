@@ -19,7 +19,7 @@
 
     <changeSet id="3" author="dp">
         <addColumn tableName="shift">
-            <column name="email" type="varchar" >
+            <column name="email" type="varchar">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -30,7 +30,7 @@
             <column name="id" type="varchar">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="email" type="varchar" >
+            <column name="email" type="varchar">
                 <constraints nullable="false"/>
             </column>
             <column name="phone_number" type="varchar"/>
@@ -49,6 +49,13 @@
         </addColumn>
 
         <dropColumn tableName="shift" columnName="email"/>
+    </changeSet>
+
+    <changeSet id="5" author="dp">
+        <addColumn tableName="shift">
+            <column name="start_time" type="timestamp with time zone"/>
+            <column name="end_time" type="timestamp with time zone"/>
+        </addColumn>
     </changeSet>
 
 </databaseChangeLog>

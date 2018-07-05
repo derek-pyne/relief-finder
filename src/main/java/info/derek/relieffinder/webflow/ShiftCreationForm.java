@@ -12,4 +12,6 @@ class ShiftCreationForm {
 
     @NotBlank
     private String name;
+
+    private String phoneNumber;
 }

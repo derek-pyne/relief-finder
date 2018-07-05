@@ -9,6 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -25,4 +26,7 @@ public class Shift extends Auditable {
 
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private Contact poster;
+
+    private Instant startTime;
+    private Instant endTime;
 }

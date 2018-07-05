@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import java.time.Instant;
 import java.util.Optional;
 
 @Slf4j
@@ -31,7 +31,7 @@ class WebflowWebhookCatcher implements ApplicationEventPublisherAware {
     private ApplicationEventPublisher publisher;
 
     @PostMapping
-    ResponseEntity<Shift> catchFormSubmission(@RequestBody @Valid WebflowWebhook webhook) {
+    ResponseEntity<Shift> catchFormSubmission(@RequestBody WebflowWebhook webhook) {
         log.info("Entering catchFormSubmission, webhook: {}", webhook);
         try {
 
@@ -57,16 +57,16 @@ class WebflowWebhookCatcher implements ApplicationEventPublisherAware {
 
             Shift shift = Shift.builder()
                     .poster(poster)
+                    .startTime(Instant.now())
+                    .endTime(Instant.now())
                     .build();
 
             publisher.publishEvent(new BeforeCreateEvent(shift));
             Shift savedShift = shiftRepository.save(shift);
             publisher.publishEvent(new AfterCreateEvent(shift));
 
-            PagedCMSList<ShiftCMS> shifts = cmsManager.getAllShifts();
-            log.info("got shifts: {}", shifts);
-
-            cmsManager.postShift(savedShift);
+            ShiftCMS shiftCMS = cmsManager.postShift(savedShift);
+            log.info("Saved shiftCMS: {}", shiftCMS);
 
             return ResponseEntity.ok(savedShift);
         } finally {
