@@ -23,6 +23,9 @@ public class Contact extends Auditable {
     @Column(unique = true, nullable = false)
     private String id;
 
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private UUID id;
     @NotBlank
     private String email;
 
