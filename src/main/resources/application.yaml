@@ -5,11 +5,13 @@ spring:
     password: ${JDBC_DATABASE_PASSWORD:postgres}
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
+  output:
+    ansi:
+      enabled: ALWAYS
 #  jpa:
 #    show-sql: true
 #    properties.hibernate.format_sql: true
 
-webflow:
-  api-key: 96503fa4fd5f1c22917075cd3a2e4654ce72c4384714bb84a35d65a91adbd5de
-
-
+logging:
+  level:
+    org.springframework.web: TRACE

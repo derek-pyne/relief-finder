@@ -1,9 +1,7 @@
 package info.derek.relieffinder.contact;
 
 import info.derek.relieffinder.shared.Auditable;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Contact extends Auditable {
 
