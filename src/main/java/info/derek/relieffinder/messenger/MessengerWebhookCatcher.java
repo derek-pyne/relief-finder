@@ -10,23 +10,50 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.data.rest.core.event.AfterCreateEvent;
 import org.springframework.data.rest.core.event.BeforeCreateEvent;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "messenger")
+@RequestMapping("/messenger")
 @AllArgsConstructor
 class MessengerWebhookCatcher {
 
     private final ShiftRepository shiftRepository;
     private final ContactRepository contactRepository;
+
+
+    @PostMapping("/webhook")
+    ResponseEntity<Map<String, Object>> catchMessengerWebhook(@RequestBody Map<String, Object> webhook) {
+        log.info("Entering catchFormSubmission, webhook: {}", webhook);
+        try {
+            return ResponseEntity.ok(Collections.emptyMap());
+        } finally {
+            log.info("Exiting catchFormSubmission, webhook: {}", webhook);
+        }
+    }
+
+    @GetMapping("/webhook")
+    ResponseEntity<String> handleValidationRequest(@RequestParam("hub.mode") String mode,
+                                                   @RequestParam("hub.challenge") String challenge,
+                                                   @RequestParam("hub.verify_token") String verifyToken) {
+        log.info("Entering handleValidationRequest, mode: {}, challenge: {}, verifyToken: {}", mode, challenge, verifyToken);
+        try {
+            if (mode.equals("subscribe") && verifyToken.equals("TOKEN")) {
+                return ResponseEntity.ok(challenge);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } finally {
+            log.info("Exiting handleValidationRequest, mode: {}, challenge: {}, verifyToken: {}", mode, challenge, verifyToken);
+        }
+    }
 
 //    @PostMapping
 //    ResponseEntity<Shift> catchMessengerWebhook(@RequestBody MessengerWebhook webhook) {
