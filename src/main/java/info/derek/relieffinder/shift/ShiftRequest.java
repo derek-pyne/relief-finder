@@ -9,14 +9,13 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.Instant;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Builder
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Shift extends Auditable {
+public class ShiftRequest extends Auditable {
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -24,12 +23,11 @@ public class Shift extends Auditable {
     private String id;
 
     @ManyToOne
-    private Contact poster;
+    private Contact requester;
 
     @ManyToOne
-    private Contact accepter;
+    private Shift shift;
 
-    private Instant startTime;
+    private ShiftRequestState state;
 
-    private Instant endTime;
 }

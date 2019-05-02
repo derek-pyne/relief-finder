@@ -1,14 +1,18 @@
 package info.derek.relieffinder.messenger;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+import java.util.List;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-class MessengerUser {
+class Entry {
 
     private String id;
 
+    private Instant time;
+
+    private List<Messaging> messaging;
 }

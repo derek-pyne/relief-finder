@@ -1,12 +1,17 @@
 package info.derek.relieffinder.messenger;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
+@NoArgsConstructor
 class Message {
 
     private String mid;
-
     private String text;
+
+    Message(String text) {
+        this.text = text;
+    }
 
 }

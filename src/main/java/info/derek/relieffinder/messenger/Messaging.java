@@ -1,15 +1,20 @@
 package info.derek.relieffinder.messenger;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 
-@Value
+import java.time.Instant;
+
+@Data
+@Builder
 class Messaging {
 
     private MessengerUser sender;
 
     private MessengerUser recipient;
 
-    private Integer timestamp;
+    private Instant timestamp;
 
     private Message message;
+
 }

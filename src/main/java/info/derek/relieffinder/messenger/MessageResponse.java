@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-class MessengerUser {
+class MessageResponse {
 
-    private String id;
+    private String recipient_id;
+
+    private String message_id;
 
 }

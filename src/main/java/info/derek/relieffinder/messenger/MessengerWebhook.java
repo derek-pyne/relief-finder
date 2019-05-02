@@ -1,14 +1,16 @@
 package info.derek.relieffinder.messenger;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Value
+@Data
+@NoArgsConstructor
 class MessengerWebhook {
 
     private String object;
 
-    private List<Event> entry;
+    private List<Entry> entry;
 
 }
