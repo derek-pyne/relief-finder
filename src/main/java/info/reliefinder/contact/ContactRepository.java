@@ -1,4 +1,4 @@
-package info.derek.relieffinder.contact;
+package info.reliefinder.contact;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

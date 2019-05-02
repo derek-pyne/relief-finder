@@ -1,35 +1,33 @@
-package info.derek.relieffinder.shift;
+package info.reliefinder.contact;
 
-import info.derek.relieffinder.contact.Contact;
-import info.derek.relieffinder.shared.Auditable;
-import lombok.Builder;
+import info.reliefinder.shared.Auditable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
-import java.time.Instant;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Builder
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Shift extends Auditable {
+public class Contact extends Auditable {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @ManyToOne
-    private Contact poster;
+    @NotBlank
+    private String email;
 
-    @ManyToOne
-    private Contact accepter;
+    private String phoneNumber;
 
-    private Instant startTime;
+    private String fullName;
 
-    private Instant endTime;
 }

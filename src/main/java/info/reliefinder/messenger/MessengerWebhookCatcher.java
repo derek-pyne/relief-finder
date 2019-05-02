@@ -1,7 +1,7 @@
-package info.derek.relieffinder.messenger;
+package info.reliefinder.messenger;
 
-import info.derek.relieffinder.contact.ContactRepository;
-import info.derek.relieffinder.shift.ShiftRepository;
+import info.reliefinder.contact.ContactRepository;
+import info.reliefinder.shift.ShiftRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

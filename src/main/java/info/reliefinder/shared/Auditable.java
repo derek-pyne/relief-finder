@@ -1,4 +1,4 @@
-package info.derek.relieffinder.shared;
+package info.reliefinder.shared;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package info.derek.relieffinder.messenger;
+package info.reliefinder.messenger;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
