@@ -1,7 +1,7 @@
 package info.reliefinder.messenger;
 
-import info.reliefinder.contact.ContactRepository;
 import info.reliefinder.shift.ShiftRepository;
+import info.reliefinder.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +24,7 @@ class MessengerWebhookCatcher {
     private ShiftRepository shiftRepository;
 
     @Autowired
-    private ContactRepository contactRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;

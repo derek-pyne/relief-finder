@@ -1,4 +1,4 @@
-package info.reliefinder.contact;
+package info.reliefinder.user;
 
 import info.reliefinder.shared.Auditable;
 import lombok.Data;
@@ -13,10 +13,10 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
 @EqualsAndHashCode(callSuper = true)
-@Entity
+@Entity(name = "users")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-public class Contact extends Auditable {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(generator = "uuid")

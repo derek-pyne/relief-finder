@@ -1,7 +1,7 @@
 package info.reliefinder.shift;
 
-import info.reliefinder.contact.Contact;
 import info.reliefinder.shared.Auditable;
+import info.reliefinder.user.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,7 +23,7 @@ public class ShiftRequest extends Auditable {
     private String id;
 
     @ManyToOne
-    private Contact requester;
+    private User requester;
 
     @ManyToOne
     private Shift shift;

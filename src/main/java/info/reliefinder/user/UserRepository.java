@@ -1,4 +1,4 @@
-package info.reliefinder.contact;
+package info.reliefinder.user;
 
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -6,6 +6,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.Optional;
 
 @RepositoryRestResource
-public interface ContactRepository extends PagingAndSortingRepository<Contact, String> {
-    Optional<Contact> findByEmail(String email);
+public interface UserRepository extends PagingAndSortingRepository<User, String> {
+    Optional<User> findByEmail(String email);
 }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
@@ -56,6 +56,10 @@
             <column name="start_time" type="timestamp with time zone"/>
             <column name="end_time" type="timestamp with time zone"/>
         </addColumn>
+    </changeSet>
+
+    <changeSet id="6" author="dp">
+        <renameTable oldTableName="contact" newTableName="users"/>
     </changeSet>
 
 </databaseChangeLog>
