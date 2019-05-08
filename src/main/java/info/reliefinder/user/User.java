@@ -1,6 +1,7 @@
 package info.reliefinder.user;
 
 import info.reliefinder.shared.Auditable;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 @Entity(name = "users")
 @Data
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class User extends Auditable {
 
