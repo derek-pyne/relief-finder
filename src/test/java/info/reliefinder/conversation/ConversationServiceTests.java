@@ -7,27 +7,46 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ConversationServiceTests {
 
-    private static User testUser = new User("test_id", "joe@coffee.com", "123-456-7890", "Joe Coffee");
+    private static User testUser = User.builder()
+            .email("joe@coffee.com")
+            .build();
+
     @Autowired
     private ConversationService conversationService;
 
     @Test
-    public void handleUserResponse_shouldReturnUserResponse() {
-
+    public void handleConversationResponse_withCancel_shouldReturnCancelMessageAndHomeResponse() throws Exception {
+        ConversationResponse cancelResponse = new ConversationResponse(UserType.USER, "Cancel", Instant.now());
+        List<ConversationResponse> responses = conversationService.handleConversationResponse(testUser, cancelResponse);
+        assertThat(responses.get(0).getText()).isEqualTo(ConversationService.CANCEL_MESSAGE);
+        assertThat(responses.get(responses.size() - 1).getText()).isEqualTo(conversationService.getPossibleConversationsResponse().getText());
     }
 
     @Test
-    public void handleUserResponse_withExit_shouldReturnExitResponse() {
+    public void getPossibleConversationsResponse_shouldReturnAllConversationTypes() throws Exception {
+        ConversationResponse possibleConversationsResponse = conversationService.getPossibleConversationsResponse();
+        assertThat(possibleConversationsResponse.getText()).contains(Arrays.asList("Post Shift", "See Shifts"));
+    }
 
-        UserResponse quitResponse = UserResponse.builder().response("quit").user(testUser).build();
-        UserResponse response = conversationService.handleUserResponse(quitResponse);
-        assertThat(response.getResponse()).isEqualTo("quit");
+    @Test
+    public void handleConversationResponse_withoutExistingConversationAndInValidConversationType_shouldReturnPossibleConversations() throws Exception {
+    }
 
+    @Test
+    public void handleConversationResponse_withoutExistingConversationAndValidConversationType_shouldStartConversation() throws Exception {
+    }
+
+    @Test
+    public void handleConversationResponse_withExistingConversation_shouldContinueConversation() throws Exception {
     }
 }

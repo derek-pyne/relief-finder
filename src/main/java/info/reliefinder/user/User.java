@@ -2,6 +2,7 @@ package info.reliefinder.user;
 
 import info.reliefinder.shared.Auditable;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 @Entity(name = "users")
 @Data
 @AllArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 public class User extends Auditable {
 
@@ -27,9 +29,9 @@ public class User extends Auditable {
 
     @NotBlank
     private String email;
-
-    private String phoneNumber;
-
-    private String fullName;
+//
+//    private String phoneNumber;
+//
+//    private String fullName;
 
 }

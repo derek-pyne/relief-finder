@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/messenger")
-class MessengerWebhookCatcher {
+class MessengerWebhookCatcherController {
 
     @Autowired
     private ShiftRepository shiftRepository;
