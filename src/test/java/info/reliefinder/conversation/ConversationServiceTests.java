@@ -1,6 +1,7 @@
 package info.reliefinder.conversation;
 
 import info.reliefinder.user.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +40,21 @@ public class ConversationServiceTests {
     }
 
     @Test
-    public void handleConversationResponse_withoutExistingConversationAndInValidConversationType_shouldReturnPossibleConversations() throws Exception {
+    public void handleConversationResponse_withoutExistingConversationAndInValidConversationType_shouldReturnConfusedMessageAndHomeResponse() throws Exception {
+        ConversationResponse conversationResponse = new ConversationResponse(UserType.USER, "random", Instant.now());
+        List<ConversationResponse> responses = conversationService.handleConversationResponse(testUser, conversationResponse);
+        assertThat(responses.get(0).getText()).isEqualTo(ConversationService.CONFUSED_MESSAGE);
+        assertThat(responses.get(responses.size() - 1).getText()).isEqualTo(conversationService.getPossibleConversationsResponse().getText());
     }
 
     @Test
+    @Ignore
     public void handleConversationResponse_withoutExistingConversationAndValidConversationType_shouldStartConversation() throws Exception {
     }
 
     @Test
+    @Ignore
     public void handleConversationResponse_withExistingConversation_shouldContinueConversation() throws Exception {
     }
+
 }

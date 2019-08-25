@@ -9,12 +9,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+
 @Slf4j
 @Service
 public class ConversationService {
 
     static final String HOME_RESPONSE = "What would you like to do next?";
     static final String ERROR_MESSAGE = "Something went wrong... oops :)";
+    static final String CONFUSED_MESSAGE = "I didn't understand that. Please select another option.";
     static final String CANCEL_MESSAGE = "Cancelling";
 
 
@@ -30,9 +34,16 @@ public class ConversationService {
 
         switch (conversationResponse.getText()) {
             case "Cancel":
-                return Arrays.asList(new ConversationResponse(UserType.SERVICE, CANCEL_MESSAGE, Instant.now()),
+                return asList(new ConversationResponse(UserType.SERVICE, CANCEL_MESSAGE, Instant.now()),
                         getPossibleConversationsResponse());
         }
-        return null;
+        ConversationType conversationType = ConversationType.valueOfLabel(conversationResponse.getText());
+
+        if (conversationType != null) {
+            return singletonList(new ConversationResponse(UserType.SERVICE,
+                    "Starting conversation for: " + conversationType.getLabel(), Instant.now()));
+        }
+        return asList(new ConversationResponse(UserType.SERVICE, CONFUSED_MESSAGE, Instant.now()),
+                getPossibleConversationsResponse());
     }
 }

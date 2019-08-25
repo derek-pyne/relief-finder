@@ -1,7 +1,9 @@
 package info.reliefinder.messenger;
 
-import info.reliefinder.shift.ShiftRepository;
-import info.reliefinder.user.UserRepository;
+import info.reliefinder.conversation.ConversationResponse;
+import info.reliefinder.conversation.ConversationService;
+import info.reliefinder.conversation.UserType;
+import info.reliefinder.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -21,10 +24,7 @@ import java.util.Map;
 class MessengerWebhookCatcherController {
 
     @Autowired
-    private ShiftRepository shiftRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private ConversationService conversationService;
 
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
@@ -38,18 +38,29 @@ class MessengerWebhookCatcherController {
     @PostMapping("/webhook")
     public Map<String, Object> catchMessengerWebhook(@RequestBody MessengerWebhook webhook) {
 
+        log.info("Received webhook: {}", webhook);
         RestTemplate restTemplate = restTemplateBuilder.build();
         Messaging receivedMessaging = webhook.getEntry().get(0).getMessaging().get(0);
 
-        Messaging message = Messaging.builder()
-                .message(new Message(receivedMessaging.getMessage().getText()))
-                .recipient(new MessengerUser(receivedMessaging.getSender().getId()))
-                .build();
+        User sender = new User(receivedMessaging.getSender().getId(), "test@test.com");
+        ConversationResponse userResponse = new ConversationResponse(UserType.USER,
+                receivedMessaging.getMessage().getText(), receivedMessaging.getTimestamp());
+        List<ConversationResponse> serviceResponses = conversationService.handleConversationResponse(sender, userResponse);
 
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(messengerUrl)
-                .queryParam("access_token", messengerAccessToken);
+        log.info("Returning responses: {}", serviceResponses);
+        serviceResponses.forEach(
+                serviceResponse -> {
+                    Messaging message = Messaging.builder()
+                            .message(new Message(serviceResponse.getText()))
+                            .recipient(new MessengerUser(receivedMessaging.getSender().getId()))
+                            .build();
 
-        restTemplate.postForEntity(uriComponentsBuilder.toUriString(), message, MessageResponse.class);
+                    UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(messengerUrl)
+                            .queryParam("access_token", messengerAccessToken);
+
+                    restTemplate.postForEntity(uriComponentsBuilder.toUriString(), message, MessageResponse.class);
+                }
+        );
 
         return Collections.emptyMap();
     }
