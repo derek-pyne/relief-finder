@@ -42,10 +42,9 @@ class MessengerWebhookCatcherController {
         RestTemplate restTemplate = restTemplateBuilder.build();
         Messaging receivedMessaging = webhook.getEntry().get(0).getMessaging().get(0);
 
-        User sender = new User(receivedMessaging.getSender().getId(), "test@test.com");
         ConversationResponse userResponse = new ConversationResponse(UserType.USER,
                 receivedMessaging.getMessage().getText(), receivedMessaging.getTimestamp());
-        List<ConversationResponse> serviceResponses = conversationService.handleConversationResponse(sender, userResponse);
+        List<ConversationResponse> serviceResponses = conversationService.handleConversationResponse(receivedMessaging.getSender().getId(), userResponse);
 
         log.info("Returning responses: {}", serviceResponses);
         serviceResponses.forEach(

@@ -1,23 +1,23 @@
 package info.reliefinder.conversation;
 
+import info.reliefinder.shared.Auditable;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Builder
-//@Entity
-//@EntityListeners(AuditingEntityListener.class)
-//public class Conversation extends Auditable {
-public class Conversation {
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Conversation extends Auditable {
 
 
     @Id
@@ -32,7 +32,7 @@ public class Conversation {
 
     private String conversationStage;
 
-    private List<ConversationResponse> conversationResponses;
+//    private List<ConversationResponse> conversationResponses;
 
 //    private String response;
 

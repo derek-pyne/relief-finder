@@ -18,9 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class ConversationServiceTests {
 
-    private static User testUser = User.builder()
-            .email("joe@coffee.com")
-            .build();
+    private static String testMessengerId = "123456789";
 
     @Autowired
     private ConversationService conversationService;
@@ -28,7 +26,7 @@ public class ConversationServiceTests {
     @Test
     public void handleConversationResponse_withCancel_shouldReturnCancelMessageAndHomeResponse() throws Exception {
         ConversationResponse cancelResponse = new ConversationResponse(UserType.USER, "Cancel", Instant.now());
-        List<ConversationResponse> responses = conversationService.handleConversationResponse(testUser, cancelResponse);
+        List<ConversationResponse> responses = conversationService.handleConversationResponse(testMessengerId, cancelResponse);
         assertThat(responses.get(0).getText()).isEqualTo(ConversationService.CANCEL_MESSAGE);
         assertThat(responses.get(responses.size() - 1).getText()).isEqualTo(conversationService.getPossibleConversationsResponse().getText());
     }
@@ -42,7 +40,7 @@ public class ConversationServiceTests {
     @Test
     public void handleConversationResponse_withoutExistingConversationAndInValidConversationType_shouldReturnConfusedMessageAndHomeResponse() throws Exception {
         ConversationResponse conversationResponse = new ConversationResponse(UserType.USER, "random", Instant.now());
-        List<ConversationResponse> responses = conversationService.handleConversationResponse(testUser, conversationResponse);
+        List<ConversationResponse> responses = conversationService.handleConversationResponse(testMessengerId, conversationResponse);
         assertThat(responses.get(0).getText()).isEqualTo(ConversationService.CONFUSED_MESSAGE);
         assertThat(responses.get(responses.size() - 1).getText()).isEqualTo(conversationService.getPossibleConversationsResponse().getText());
     }
@@ -50,6 +48,9 @@ public class ConversationServiceTests {
     @Test
     @Ignore
     public void handleConversationResponse_withoutExistingConversationAndValidConversationType_shouldStartConversation() throws Exception {
+        ConversationResponse conversationResponse = new ConversationResponse(UserType.USER, ConversationType.POST_SHIFT.getLabel(), Instant.now());
+        List<ConversationResponse> conversationResponses = conversationService.handleConversationResponse(testMessengerId, conversationResponse);
+
     }
 
     @Test

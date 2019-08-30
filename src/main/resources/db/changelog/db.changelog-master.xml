@@ -62,4 +62,11 @@
         <renameTable oldTableName="contact" newTableName="users"/>
     </changeSet>
 
+    <changeSet id="7" author="dp">
+        <addColumn tableName="users">
+            <column name="messenger_id" type="varchar"/>
+        </addColumn>
+        <dropNotNullConstraint tableName="users" columnName="email"/>
+    </changeSet>
+
 </databaseChangeLog>
