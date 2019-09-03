@@ -1,6 +1,5 @@
 package info.reliefinder.conversation;
 
-import info.reliefinder.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,19 +22,21 @@ public class ConversationService {
     static final String ERROR_MESSAGE = "Something went wrong... oops :)";
     static final String CONFUSED_MESSAGE = "I didn't understand that. Please select another option.";
     static final String CANCEL_MESSAGE = "Cancelling";
+    static final String INITIAL_CONVERSATION_STAGE = "INITIAL";
+    static final String FINAL_CONVERSATION_STAGE = "FINAL";
 
-    static final Map<ConversationType, Map<String, String>> conversationMappings =
+    static final Map<ConversationType, Map<String, ConversationStageResponse>> conversationMappings =
             Map.of(
                     ConversationType.POST_SHIFT, Map.of(
-                            "location", "Where is the shift?",
-                            "when", "What time?"
+                            INITIAL_CONVERSATION_STAGE, new ConversationStageResponse("WHEN", "Where is the shift?"),
+                            "WHEN", new ConversationStageResponse(FINAL_CONVERSATION_STAGE, "What time?")
                     )
             );
 
     @Autowired
     private ConversationRepository conversationRepository;
 
-    public ConversationResponse getPossibleConversationsResponse() {
+    ConversationResponse getPossibleConversationsResponse() {
         List<String> conversationTypes = Arrays.stream(ConversationType.values())
                 .map(ConversationType::getLabel)
                 .collect(Collectors.toList());
@@ -43,36 +44,53 @@ public class ConversationService {
         return new ConversationResponse(UserType.SERVICE, responseText, Instant.now());
     }
 
-    public List<ConversationResponse> handleConversationResponse(String messengerId, ConversationResponse conversationResponse) {
+    public Interaction handleConversationResponse(String messengerId, ConversationResponse conversationResponse) {
 
 //        Checking for global keywords
         switch (conversationResponse.getText()) {
             case "Cancel":
-                return asList(new ConversationResponse(UserType.SERVICE, CANCEL_MESSAGE, Instant.now()),
-                        getPossibleConversationsResponse());
+                return new Interaction(asList(new ConversationResponse(UserType.SERVICE, CANCEL_MESSAGE, Instant.now()),
+                        getPossibleConversationsResponse()));
         }
-        
+
 //        Checking for existing conversation
-        Optional<Conversation> existingConversationOptional = conversationRepository.findByUserId(messengerId);
+        Optional<Conversation> existingConversationOptional = conversationRepository.findTopByUserIdOrderByCreatedDateDesc(messengerId);
 
         if (existingConversationOptional.isPresent()) {
             Conversation existingConversation = existingConversationOptional.get();
 
-            String responseText = conversationMappings.get(existingConversation.getConversationType())
+            ConversationStageResponse conversationStageResponse = conversationMappings.get(existingConversation.getConversationType())
                     .get(existingConversation.getConversationStage());
-            return singletonList(new ConversationResponse(UserType.SERVICE, responseText, Instant.now()));
+
+            existingConversation.setConversationStage(conversationStageResponse.getNextConversationStage());
+            if (conversationStageResponse.getNextConversationStage().equals(FINAL_CONVERSATION_STAGE)) {
+                existingConversation.setCompletedAt(Instant.now());
+            }
+            Conversation savedConversation = conversationRepository.save(existingConversation);
+
+            return new Interaction(savedConversation, singletonList(new ConversationResponse(UserType.SERVICE, conversationStageResponse.getResponseText(), Instant.now())));
         }
 
 //        Checking for start of conversation
         ConversationType conversationType = ConversationType.valueOfLabel(conversationResponse.getText());
 
         if (conversationType != null) {
-            return singletonList(new ConversationResponse(UserType.SERVICE,
-                    "Starting conversation for: " + conversationType.getLabel(), Instant.now()));
+
+            ConversationStageResponse initialConversationStageResponse = conversationMappings.get(conversationType).get(INITIAL_CONVERSATION_STAGE);
+
+            Conversation conversation = Conversation.builder()
+                    .userId(messengerId)
+                    .conversationType(conversationType)
+                    .conversationStage(initialConversationStageResponse.getNextConversationStage())
+                    .build();
+
+            Conversation savedConversation = conversationRepository.save(conversation);
+            return new Interaction(savedConversation, singletonList(new ConversationResponse(UserType.SERVICE,
+                    initialConversationStageResponse.getResponseText(), Instant.now())));
         }
-        
+
 //        Exiting with confused
-        return asList(new ConversationResponse(UserType.SERVICE, CONFUSED_MESSAGE, Instant.now()),
-                getPossibleConversationsResponse());
+        return new Interaction(asList(new ConversationResponse(UserType.SERVICE, CONFUSED_MESSAGE, Instant.now()),
+                getPossibleConversationsResponse()));
     }
 }

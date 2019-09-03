@@ -7,7 +7,7 @@ spring:
     username: ${JDBC_DATABASE_USERNAME:postgres}
     password: ${JDBC_DATABASE_PASSWORD:postgres}
   liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.xml
+    change-log: classpath:/db/changelog/db.changelog.xml
   output:
     ansi:
       enabled: ALWAYS
@@ -33,3 +33,13 @@ logging:
 facebook-messenger:
   messaging-url: https://graph.facebook.com/v2.6/me/messages
   access-token: EAAFZBlJlGTq0BAL8pydMUwKA3xJZCILTFAf0lCTqAJJp2cqIl9ZCBnSKcZAMnU4NqEmgdbcvUiXZANEXOGPgm9qF4WjJDc5r2rLz4mZBBiAE5uHcCUkZA1RizfsQMppoCwtBoBnEKBPZA0Gh6dzyQNbh5T2PusufaGdT6UjZBfGbiSXziY3QmdI98RyAzPYZARZAKMZD
+
+---
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:relief-finder
+#h2:
+#  console:
+#    enabled: true
+#    path: /h2-console

@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface ConversationRepository extends PagingAndSortingRepository<Conversation, String> {
 
-    Optional<Conversation> findByUserId(String userId);
+    Optional<Conversation> findTopByUserIdOrderByCreatedDateDesc(String userId);
+
 }

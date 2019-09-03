@@ -2,8 +2,8 @@ package info.reliefinder.messenger;
 
 import info.reliefinder.conversation.ConversationResponse;
 import info.reliefinder.conversation.ConversationService;
+import info.reliefinder.conversation.Interaction;
 import info.reliefinder.conversation.UserType;
-import info.reliefinder.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +44,8 @@ class MessengerWebhookCatcherController {
 
         ConversationResponse userResponse = new ConversationResponse(UserType.USER,
                 receivedMessaging.getMessage().getText(), receivedMessaging.getTimestamp());
-        List<ConversationResponse> serviceResponses = conversationService.handleConversationResponse(receivedMessaging.getSender().getId(), userResponse);
+        Interaction interaction = conversationService.handleConversationResponse(receivedMessaging.getSender().getId(), userResponse);
+        List<ConversationResponse> serviceResponses = interaction.getResponses();
 
         log.info("Returning responses: {}", serviceResponses);
         serviceResponses.forEach(

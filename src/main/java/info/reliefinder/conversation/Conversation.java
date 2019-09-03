@@ -1,15 +1,12 @@
 package info.reliefinder.conversation;
 
 import info.reliefinder.shared.Auditable;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.List;
 
 
 @Data
@@ -17,6 +14,8 @@ import java.util.List;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Conversation extends Auditable {
 
 
