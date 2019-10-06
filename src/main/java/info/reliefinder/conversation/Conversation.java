@@ -17,7 +17,13 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Conversation extends Auditable {
-
+/*
+A Conversation represents a complete set of interactions back and forth with the user.
+Conversations do not go on indefinetly.
+A Conversation has a type and goes through multiple defined stages.
+When it is completed a completed time is recorded.
+Conversations can involve many ConversationMessages going back and forth between the user and the service.
+ */
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -31,19 +37,9 @@ public class Conversation extends Auditable {
 
     private String conversationStage;
 
-//    private List<ConversationResponse> conversationResponses;
-
-//    private String response;
-
 //    @Singular("datum")
 //    private Map<String, String> data;
 
     private Instant completedAt;
 
-//    public ConversationResponse getMostRecentUserResponse() {
-//        if (!conversationRespons.isEmpty()) {
-//            return conversationRespons.get(conversationRespons.size()-1);
-//        }
-//        return null;
-//    }
 }

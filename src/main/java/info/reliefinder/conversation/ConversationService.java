@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
+import static info.reliefinder.conversation.UserType.SERVICE;
 import static java.util.Collections.singletonList;
 
 @Slf4j
@@ -36,26 +36,37 @@ public class ConversationService {
     @Autowired
     private ConversationRepository conversationRepository;
 
-    ConversationResponse getPossibleConversationsResponse() {
+    ConversationMessage possibleConversationTypesConversationResponse() {
+        /*
+        This returns a message outlining all the possible Conversation paths the user can take.
+        It is like a home screen message.
+         */
         List<String> conversationTypes = Arrays.stream(ConversationType.values())
                 .map(ConversationType::getLabel)
                 .collect(Collectors.toList());
         String responseText = String.join(",", conversationTypes);
-        return new ConversationResponse(UserType.SERVICE, responseText, Instant.now());
+        return new ConversationMessage(responseText, SERVICE, Instant.now());
     }
 
-    public Interaction handleConversationResponse(String messengerId, ConversationResponse conversationResponse) {
+    public List<ConversationMessage> handleConversationResponse(String messengerId, ConversationMessage conversationMessage) {
+        /*
+        This handles any message coming from a User.
+        This function will check if they are in an existing conversation and continue it, start a new conversation,
+        or do some global actions.
+         */
 
 //        Checking for global keywords
-        switch (conversationResponse.getText()) {
-            case "Cancel":
-                return new Interaction(asList(new ConversationResponse(UserType.SERVICE, CANCEL_MESSAGE, Instant.now()),
-                        getPossibleConversationsResponse()));
+        if ("Cancel".equals(conversationMessage.getText())) {
+            return Arrays.asList(
+                    new ConversationMessage(CANCEL_MESSAGE, SERVICE, Instant.now()),
+                    possibleConversationTypesConversationResponse()
+            );
         }
 
 //        Checking for existing conversation
         Optional<Conversation> existingConversationOptional = conversationRepository.findTopByUserIdOrderByCreatedDateDesc(messengerId);
 
+//        If there is an existing conversation, continue it
         if (existingConversationOptional.isPresent()) {
             Conversation existingConversation = existingConversationOptional.get();
 
@@ -63,17 +74,21 @@ public class ConversationService {
                     .get(existingConversation.getConversationStage());
 
             existingConversation.setConversationStage(conversationStageResponse.getNextConversationStage());
+
+//            If conversation is finished, save completedAt timestamp to mark as finished
             if (conversationStageResponse.getNextConversationStage().equals(FINAL_CONVERSATION_STAGE)) {
                 existingConversation.setCompletedAt(Instant.now());
             }
             Conversation savedConversation = conversationRepository.save(existingConversation);
-
-            return new Interaction(savedConversation, singletonList(new ConversationResponse(UserType.SERVICE, conversationStageResponse.getResponseText(), Instant.now())));
+            return singletonList(
+                    new ConversationMessage(conversationStageResponse.getResponseText(), SERVICE, Instant.now(), savedConversation.getId())
+            );
         }
 
 //        Checking for start of conversation
-        ConversationType conversationType = ConversationType.valueOfLabel(conversationResponse.getText());
+        ConversationType conversationType = ConversationType.valueOfLabel(conversationMessage.getText());
 
+//        If a valid conversation is matched, start a conversation of that type
         if (conversationType != null) {
 
             ConversationStageResponse initialConversationStageResponse = conversationMappings.get(conversationType).get(INITIAL_CONVERSATION_STAGE);
@@ -85,12 +100,15 @@ public class ConversationService {
                     .build();
 
             Conversation savedConversation = conversationRepository.save(conversation);
-            return new Interaction(savedConversation, singletonList(new ConversationResponse(UserType.SERVICE,
-                    initialConversationStageResponse.getResponseText(), Instant.now())));
+            return singletonList(
+                    new ConversationMessage(initialConversationStageResponse.getResponseText(), SERVICE, Instant.now(), savedConversation.getId())
+            );
         }
 
 //        Exiting with confused
-        return new Interaction(asList(new ConversationResponse(UserType.SERVICE, CONFUSED_MESSAGE, Instant.now()),
-                getPossibleConversationsResponse()));
+        return Arrays.asList(
+                new ConversationMessage(CONFUSED_MESSAGE, SERVICE, Instant.now()),
+                possibleConversationTypesConversationResponse()
+        );
     }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-class MessageResponse {
+public class MessageResponse {
 
     private String recipient_id;
 
