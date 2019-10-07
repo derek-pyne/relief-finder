@@ -65,9 +65,11 @@ public class ConversationServiceTests {
         assertThat(messages).isNotEmpty();
         assertThat(messages.get(0).getConversationId()).isNotBlank();
 
-//        TODO should also check that converastion object was persisted
-        //        assertThat(interaction.getConversation()).isNotNull();
-//        assertThat(interaction.getConversation().getConversationType()).isEqualTo(POST_SHIFT);
+        List<Conversation> savedConversations = conversationRepository.findAll();
+
+        assertThat(savedConversations).isNotEmpty();
+        assertThat(savedConversations.get(0).getId()).isEqualTo(messages.get(0).getConversationId());
+        assertThat(savedConversations.get(0).getConversationType()).isEqualTo(POST_SHIFT);
     }
 
     @Test

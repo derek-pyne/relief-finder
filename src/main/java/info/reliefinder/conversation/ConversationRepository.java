@@ -1,10 +1,10 @@
 package info.reliefinder.conversation;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ConversationRepository extends PagingAndSortingRepository<Conversation, String> {
+public interface ConversationRepository extends JpaRepository<Conversation, String> {
 
     Optional<Conversation> findTopByUserIdOrderByCreatedDateDesc(String userId);
 

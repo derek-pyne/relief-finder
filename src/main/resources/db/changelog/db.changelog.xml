@@ -83,4 +83,17 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="9" author="dp">
+        <createTable tableName="conversation_message">
+            <column name="id" type="varchar">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="conversation_id" type="varchar"/>
+            <column name="user_type" type="varchar"/>
+            <column name="text" type="varchar"/>
+            <column name="sent_at" type="timestamp with time zone"/>
+            <column name="created_date" type="timestamp with time zone"/>
+            <column name="last_modified_date" type="timestamp with time zone"/>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>
