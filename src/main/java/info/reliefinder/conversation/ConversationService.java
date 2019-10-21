@@ -64,7 +64,7 @@ public class ConversationService {
         }
 
 //        Checking for existing conversation
-        Optional<Conversation> existingConversationOptional = conversationRepository.findTopByUserIdOrderByCreatedDateDesc(messengerId);
+        Optional<Conversation> existingConversationOptional = conversationRepository.findTopByUserIdAndCompletedAtIsNullOrderByCreatedDateDesc(messengerId);
 
 //        If there is an existing conversation, continue it
         if (existingConversationOptional.isPresent()) {

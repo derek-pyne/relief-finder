@@ -94,4 +94,23 @@ public class ConversationServiceTests {
 //        assertThat(interaction.getConversation().getConversationStage()).isEqualTo(postShiftMappings.get(initialResponse.getNextConversationStage()).getNextConversationStage());
     }
 
+    @Test
+    public void handleConversationResponse_withFinalStage_shouldFinishConversationAndHomeResponse() throws Exception {
+
+    }
+
+    @Test
+    public void handleConversationResponse_withOldFinishedConversation_shouldStartNewConversation() throws Exception {
+
+        Conversation finishedConversation = conversationRepository.save(Conversation.builder()
+                .conversationType(POST_SHIFT)
+                .conversationStage(ConversationService.FINAL_CONVERSATION_STAGE)
+                .userId(testMessengerId)
+                .completedAt(Instant.now())
+                .build());
+
+        ConversationMessage conversationMessage = new ConversationMessage(POST_SHIFT.getLabel(), USER, Instant.now());
+        List<ConversationMessage> messages = conversationService.handleConversationResponse(testMessengerId, conversationMessage);
+        assertThat(messages.get(0).getConversationId()).isNotEqualTo(finishedConversation.getId());
+    }
 }

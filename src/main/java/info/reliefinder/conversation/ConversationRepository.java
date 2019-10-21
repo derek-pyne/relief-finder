@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface ConversationRepository extends JpaRepository<Conversation, String> {
 
-    Optional<Conversation> findTopByUserIdOrderByCreatedDateDesc(String userId);
+    Optional<Conversation> findTopByUserIdAndCompletedAtIsNullOrderByCreatedDateDesc(String userId);
 
 }
