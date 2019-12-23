@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static info.reliefinder.conversation.UserType.SERVICE;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
 @Slf4j
@@ -22,6 +23,7 @@ public class ConversationService {
     static final String ERROR_MESSAGE = "Something went wrong... oops :)";
     static final String CONFUSED_MESSAGE = "I didn't understand that. Please select another option.";
     static final String CANCEL_MESSAGE = "Cancelling";
+    static final String FINISHED_CONVERSATION_MESSAGE = "All done here :)";
     static final String INITIAL_CONVERSATION_STAGE = "INITIAL";
     static final String FINAL_CONVERSATION_STAGE = "FINAL";
 
@@ -36,6 +38,9 @@ public class ConversationService {
     @Autowired
     private ConversationRepository conversationRepository;
 
+    @Autowired
+    private ConversationMessageRepository conversationMessageRepository;
+
     ConversationMessage possibleConversationTypesConversationResponse() {
         /*
         This returns a message outlining all the possible Conversation paths the user can take.
@@ -45,7 +50,7 @@ public class ConversationService {
                 .map(ConversationType::getLabel)
                 .collect(Collectors.toList());
         String responseText = String.join(",", conversationTypes);
-        return new ConversationMessage(responseText, SERVICE, Instant.now());
+        return conversationMessageRepository.save(new ConversationMessage(responseText, SERVICE, Instant.now()));
     }
 
     public List<ConversationMessage> handleConversationResponse(String messengerId, ConversationMessage conversationMessage) {
@@ -55,9 +60,18 @@ public class ConversationService {
         or do some global actions.
          */
 
-//        Checking for global keywords
+//        Save incoming ConversationMessage
+        List<ConversationMessage> respondingConversationMessages = parseConversationResponse(messengerId, conversationMessage);
+
+        conversationMessage.setConversationId(respondingConversationMessages.get(0).getConversationId());
+        conversationMessageRepository.save(conversationMessage);
+        return conversationMessageRepository.saveAll(respondingConversationMessages);
+    }
+
+    private List<ConversationMessage> parseConversationResponse(String messengerId, ConversationMessage conversationMessage) {
+        //        Checking for global keywords
         if ("Cancel".equals(conversationMessage.getText())) {
-            return Arrays.asList(
+            return asList(
                     new ConversationMessage(CANCEL_MESSAGE, SERVICE, Instant.now()),
                     possibleConversationTypesConversationResponse()
             );
@@ -70,15 +84,20 @@ public class ConversationService {
         if (existingConversationOptional.isPresent()) {
             Conversation existingConversation = existingConversationOptional.get();
 
+//            Checking if last message in conversation
+            if (existingConversation.getConversationStage().equals(FINAL_CONVERSATION_STAGE)) {
+                existingConversation.setCompletedAt(Instant.now());
+                return asList(
+                        new ConversationMessage(FINISHED_CONVERSATION_MESSAGE, SERVICE, Instant.now(), existingConversation.getId()),
+                        possibleConversationTypesConversationResponse()
+                );
+            }
             ConversationStageResponse conversationStageResponse = conversationMappings.get(existingConversation.getConversationType())
                     .get(existingConversation.getConversationStage());
 
             existingConversation.setConversationStage(conversationStageResponse.getNextConversationStage());
 
 //            If conversation is finished, save completedAt timestamp to mark as finished
-            if (conversationStageResponse.getNextConversationStage().equals(FINAL_CONVERSATION_STAGE)) {
-                existingConversation.setCompletedAt(Instant.now());
-            }
             Conversation savedConversation = conversationRepository.save(existingConversation);
             return singletonList(
                     new ConversationMessage(conversationStageResponse.getResponseText(), SERVICE, Instant.now(), savedConversation.getId())
@@ -106,7 +125,7 @@ public class ConversationService {
         }
 
 //        Exiting with confused
-        return Arrays.asList(
+        return asList(
                 new ConversationMessage(CONFUSED_MESSAGE, SERVICE, Instant.now()),
                 possibleConversationTypesConversationResponse()
         );
